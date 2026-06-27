@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  SELLER
+  CLIENT
+  PROCURER
+}
+
+model User {
+  id        String    @id @default(uuid())
+  password  String
+  full_name String?
+  username  String    @unique
+  role      Role      @default(CLIENT)
+
+  products  Product[] // Seller qo'shgan mahsulotlar
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  image       String
+  stock       Int      @default(0) // Mavjud miqdor
+
+  sellerId    String
+  seller      User     @relation(fields: [sellerId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
