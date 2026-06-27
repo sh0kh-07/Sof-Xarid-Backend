@@ -21,17 +21,28 @@ const prisma_1 = require("./prisma");
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const product_routes_1 = __importDefault(require("./routes/product.routes"));
+const order_routes_1 = __importDefault(require("./routes/order.routes"));
 const swagger_1 = require("./swagger");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
+app.use((0, cors_1.default)({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+app.use((0, cors_1.default)({
+    origin: ['http://localhost:2020', 'http://localhost:5173', 'https://213.199.40.176:2020'],
+    credentials: true,
+}));
 // Serve uploaded images statically
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, '../uploads')));
 // Routes
 app.use('/auth', auth_routes_1.default);
 app.use('/users', user_routes_1.default);
 app.use('/products', product_routes_1.default);
+app.use('/orders', order_routes_1.default);
 // Swagger Documentation (http://localhost:3000/api-docs)
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.swaggerDocument));
 const PORT = process.env.PORT || 3000;

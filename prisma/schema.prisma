@@ -21,7 +21,10 @@ model User {
   username  String    @unique
   role      Role      @default(CLIENT)
 
-  products  Product[] // Seller qo'shgan mahsulotlar
+  products       Product[] // Seller qo'shgan mahsulotlar
+
+  clientOrders   Order[]   @relation("ClientOrders") // Client sifatida qilgan buyurtmalari
+  sellerOrders   Order[]   @relation("SellerOrders") // Seller sifatida qabul qilgan buyurtmalari
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -38,6 +41,34 @@ model Product {
   sellerId    String
   seller      User     @relation(fields: [sellerId], references: [id])
 
+  orders      Order[]  // Shu mahsulotga tegishli buyurtmalar
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  DELIVERED
+  CANCELLED
+}
+
+model Order {
+  id          String      @id @default(uuid())
+
+  productId   String
+  product     Product     @relation(fields: [productId], references: [id])
+
+  quantity    Int
+
+  clientId    String
+  client      User        @relation("ClientOrders", fields: [clientId], references: [id])
+
+  sellerId    String
+  seller      User        @relation("SellerOrders", fields: [sellerId], references: [id])
+
+  status      OrderStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }

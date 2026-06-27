@@ -8,6 +8,7 @@ import { prisma } from './prisma';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import productRoutes from './routes/product.routes';
+import orederRoutes from './routes/order.routes'
 import { swaggerDocument } from './swagger';
 
 const app = express();
@@ -32,6 +33,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/products', productRoutes);
+app.use('/orders', orederRoutes);
 
 // Swagger Documentation (http://localhost:3000/api-docs)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

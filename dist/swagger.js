@@ -10,7 +10,11 @@ exports.swaggerDocument = {
     },
     servers: [
         {
-            url: 'http://localhost:3000',
+            url: 'http://localhost:2020',
+        },
+        {
+            url: 'http://213.199.40.176:2020',
+            description: 'Production server',
         },
     ],
     components: {
@@ -225,6 +229,113 @@ exports.swaggerDocument = {
                 parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
                 responses: {
                     204: { description: 'O`chirildi' },
+                },
+            },
+        },
+        '/orders': {
+            get: {
+                tags: ['Orders'],
+                summary: 'Barcha buyurtmalarni olish',
+                responses: {
+                    200: { description: 'Muvaffaqiyatli' },
+                },
+            },
+            post: {
+                tags: ['Orders'],
+                summary: 'Yangi buyurtma yaratish',
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    productId: { type: 'string', description: 'Buyurtma qilinayotgan mahsulot IDsi' },
+                                    quantity: { type: 'number', description: 'Mahsulot miqdori' },
+                                    clientId: { type: 'string', description: 'Buyurtma beruvchi client IDsi' },
+                                    sellerId: { type: 'string', description: 'Mahsulot egasi seller IDsi' },
+                                },
+                                required: ['productId', 'quantity', 'clientId', 'sellerId'],
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    201: { description: 'Buyurtma yaratildi' },
+                },
+            },
+        },
+        '/orders/{id}': {
+            get: {
+                tags: ['Orders'],
+                summary: 'ID orqali buyurtmani olish',
+                parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+                responses: {
+                    200: { description: 'Muvaffaqiyatli' },
+                    404: { description: 'Topilmadi' },
+                },
+            },
+            put: {
+                tags: ['Orders'],
+                summary: 'Buyurtma holatini yoki miqdorini tahrirlash',
+                parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+                requestBody: {
+                    required: false,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    quantity: { type: 'number' },
+                                    status: {
+                                        type: 'string',
+                                        enum: ['PENDING', 'CONFIRMED', 'DELIVERED', 'CANCELLED'],
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    200: { description: 'Tahrirlandi' },
+                },
+            },
+            delete: {
+                tags: ['Orders'],
+                summary: 'Buyurtmani o`chirish',
+                parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+                responses: {
+                    204: { description: 'O`chirildi' },
+                },
+            },
+        },
+        '/orders/{id}/status': {
+            patch: {
+                tags: ['Orders'],
+                summary: 'Buyurtma holatini o`zgartirish (Seller yoki Client tomonidan)',
+                parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    status: {
+                                        type: 'string',
+                                        enum: ['PENDING', 'CONFIRMED', 'DELIVERED', 'CANCELLED'],
+                                        description: 'Yangi holat: Seller CONFIRMED/DELIVERED qiladi, Client CANCELLED qila oladi',
+                                    },
+                                },
+                                required: ['status'],
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    200: { description: 'Holat muvaffaqiyatli o`zgartirildi' },
+                    400: { description: 'Noto`g`ri holat qiymati' },
+                    404: { description: 'Buyurtma topilmadi' },
                 },
             },
         },

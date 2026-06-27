@@ -47,13 +47,16 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield prisma_1.prisma.user.findUnique({ where: { username } });
         if (!user)
             return res.status(404).json({ error: 'User not found' });
+        console.log('db password:', user.password);
         const isMatch = yield bcryptjs_1.default.compare(password, user.password);
+        console.log('isMatch:', isMatch);
         if (!isMatch)
             return res.status(401).json({ error: 'Invalid credentials' });
         const token = jsonwebtoken_1.default.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '1d' });
         res.json({ user, token });
     }
     catch (error) {
+        console.log('Error:', error);
         res.status(500).json({ error: 'Login failed' });
     }
 });
