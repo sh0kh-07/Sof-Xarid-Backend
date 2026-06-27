@@ -9,6 +9,10 @@ export const swaggerDocument = {
     {
       url: 'http://localhost:3000',
     },
+    {
+        url: 'http://213.199.40.176:3000',
+        description: 'Production server',
+      },
   ],
   components: {
     securitySchemes: {
